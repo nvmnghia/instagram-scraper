@@ -1146,9 +1146,15 @@ class InstagramScraper(object):
         return files_path
 
     def templatefilename(self, item):
+        split_ext = lambda url: os.path.splitext(os.path.split(url.split('?')[0])[1])
 
-        for url in item['urls']:
-            filename, extension = os.path.splitext(os.path.split(url.split('?')[0])[1])
+        urls = item['urls']
+        if item['is_video']:
+            video_url = next(url for url in urls if split_ext(url)[1] == '.mp4')    # First .mp4
+            urls = [video_url]
+
+        for url in urls:
+            filename, extension = split_ext(url)
             try:
                 template = self.template
                 template_values = {
